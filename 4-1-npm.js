@@ -1,11 +1,23 @@
-// 1. the response object
-// 2. returning HTML pages
-// 3. basic routing
+// 1. 3rd party packages
+// 2. package.json
+// 3. dependencies
+
 const http = require("http");
 const fs = require("fs");
+const _ = require("lodash");
 
 const server = http.createServer((req, res) => {
-  console.log(req.url, req.method);
+  // console.log(req.url, req.method);
+  // lodash
+  const num = _.random(0, 20);
+  console.log(num);
+
+  const greet = _.once(() => {
+    console.log("hello");
+  });
+
+  greet();
+  greet();
 
   // set header content-type
   res.setHeader("Content-Type", "text/html");
@@ -23,6 +35,15 @@ const server = http.createServer((req, res) => {
     case "/path2":
       path += req.url + ".html";
       res.statusCode = 200;
+      break;
+    case "/redirect":
+      path += req.url + ".html";
+      res.statusCode = 200;
+      break;
+    case "/toRedirect":
+      res.statusCode = 301;
+      res.setHeader("Location", "/redirect");
+      res.end();
       break;
     default:
       path += "/404.html";
