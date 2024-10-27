@@ -1,11 +1,12 @@
 {
   "scripts": {
-    "start": "nodemon 6-1-EJS.js"
+    "start": "nodemon 8-middleware.js"
   },
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "nodemon": "^3.1.7"
   }
 }
