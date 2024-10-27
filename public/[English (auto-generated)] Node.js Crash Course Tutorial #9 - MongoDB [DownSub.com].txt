@@ -1,0 +1,1702 @@
+a rather than gang so now we've figured
+
+out how to use templates and middleware
+
+I want to go one step further and
+
+introduce a database to the mix as well
+
+so we can store data in that and then we
+
+can get that data and inject into our
+
+views when we need to so when we're
+
+working with databases there's a couple
+
+of main types we typically choose from
+
+the first type is a sequel database like
+
+my sequel and the second type is a no
+
+sequel database and both of those
+
+structure data differently so sequel
+
+databases use tables rows and columns to
+
+store records of data and no sequel
+
+databases instead make use of
+
+collections and documents now the one
+
+that we'll be using is called MongoDB
+
+and that is a no sequel database so how
+
+exactly does a no sequel database work
+
+well it split up into collections and
+
+they are a bit like tables in sequel
+
+databases so each collection would be
+
+used to store a particular type of data
+
+for example a user collection would
+
+store user documents now in our case for
+
+our project we might have a blog
+
+collection to store up blog documents
+
+and you can have as many different
+
+collections as you want but the
+
+important thing to remember is that each
+
+one would contain only one type of
+
+document be it user blog author or
+
+something else so each collection would
+
+store documents and in our case that is
+
+going to be blog documents now a
+
+document is a bit like a record in a
+
+sequel database each one represents a
+
+single item of data so a blog document
+
+represents a single blog now these
+
+documents are stored in a format that
+
+looks very similar to JSON or JavaScript
+
+objects they basically hold a series of
+
+key and value pairs for example a blog
+
+document could have a title a snippet
+
+and a body property and it would also
+
+have this auto-generated unique ID to
+
+identify it as well so from our code we
+
+could connect to a collection like the
+
+blocks in MongoDB and then we could
+
+either save read update or delete
+
+documents
+
+inside it so let's start by creating a
+
+database and hooking it up with our code
+
+southern when we're working with MongoDB
+
+there's a couple of different setup
+
+options that we can use we can either
+
+install MongoDB on our computer locally
+
+and use and then deploy that or we could
+
+use a cloud database which is already
+
+hosted for us and it can be quite a lot
+
+easier for us to manage so we're gonna
+
+do that now the cloud service we're
+
+going to be using to make this database
+
+is called MongoDB Atlas and you can find
+
+that at this web address which I will
+
+leave down below now it's completely
+
+free to begin with and you can sign up
+
+for a free account right here by
+
+clicking on this button and just signing
+
+up I already have an account so I'm
+
+gonna just log in right here with my
+
+Google account and then when you sign up
+
+you should see this page now it might
+
+look a little bit different when you
+
+view this depending on when you're
+
+watching the video they do change their
+
+design a little bit but the
+
+functionality underneath is the same so
+
+the first thing we need to do is to
+
+build a new cluster so click on that
+
+button and we want to create a free one
+
+unless you've got money to splash and
+
+you want to sign up for one of the
+
+premium options then we want to choose a
+
+provider and the region I'm going to
+
+stick with the defaults right there we
+
+can give our cluster a name if you want
+
+I'm just going to call this notes like
+
+so you can leave it as the default if
+
+you prefer it really doesn't matter at
+
+the minute especially for this tutorial
+
+and then it's going to just take a
+
+couple of minutes to create that cluster
+
+so then once that's done the next step
+
+is to create a database and a collection
+
+inside that database so let's click on
+
+collections to do that and then we want
+
+to add our own data we need to give this
+
+database a name call it what you will
+
+I'm gonna call it node toots and then we
+
+need a collection name remember a
+
+collection is where we're going to store
+
+a load of documents of a certain type so
+
+we're gonna stop blog documents for our
+
+blog in there so we'll call this blogs
+
+makes sense and I'm going to create this
+
+collection so this is our collection
+
+right here there's no documents in it at
+
+the minute what I'm gonna do now is
+
+create a user so that we can use that
+
+use it for database access from our code
+
+over here so let's go to database
+
+access and create a new database user
+
+I'm going to call this net ninja and the
+
+password is gonna be test one two three
+
+four please create something that's more
+
+unique than that and more secure we need
+
+to give read and write access to any
+
+database and I'm gonna add user or right
+
+here so I'm going to use that use it
+
+later on the username and the password I
+
+created from our code so that we can
+
+connect to the database that way not
+
+anyone can just connect to the database
+
+only invalid user that we declare or
+
+write here so some kind of admin user
+
+all right so now we need to go back to
+
+clusters and we need to figure out a way
+
+to connect to this database so I'm gonna
+
+connect right here and then we want to
+
+connect from our application like so and
+
+this connection string we're going to
+
+need later on so I'm gonna copy this
+
+right here and I'm gonna go back over to
+
+our app file and I'm going to create for
+
+now just a new variable so Const and
+
+I'll call this DB URI and set it equal
+
+to this string like so so we're going to
+
+use that shortly to connect to our
+
+database and in fact I'm gonna grab that
+
+and I'm gonna paste it actually below
+
+where we declare our app and I'm going
+
+to also do a little comment that says
+
+connect to MongoDB so this is the
+
+connection string that we're going to
+
+use later on to connect to our database
+
+and we're going to replace this right
+
+here with our username which is net
+
+ninja which we just created right and
+
+this is test one two three four
+
+that was our password so then now we
+
+need to actually connect to the database
+
+and we could connect using the plain
+
+MongoDB API and package and we could use
+
+the regular MongoDB API to make queries
+
+to the database too but that can
+
+sometimes be a bit clunky and verbose so
+
+instead we'll be using something called
+
+Mongoose to connect and interact with
+
+the database which I think makes it a
+
+bit easier and it's nicer to work with
+
+so let's take a quick look at what
+
+Mongoose actually is
+
+okay they're my friends so Mongoose is
+
+an odm library and that is an object
+
+document mapping library and that
+
+basically means that it wraps the
+
+standard MongoDB API and it provides us
+
+with a much easier way to connect to and
+
+communicate with the database now it
+
+does this by allowing us to create
+
+simple data models which have database
+
+query methods to creates get deletes and
+
+update data based documents now under
+
+the hood mongoose does all the heavy
+
+lifting for us it queries the correct
+
+database collection for us based on the
+
+name of the model we use and then it
+
+performs the action required and returns
+
+us a response now you don't have to use
+
+Mongoose you can just use the standalone
+
+MongoDB library if you prefer but
+
+sometimes it can feel a bit more clunky
+
+and verbose so we're gonna use Mongoose
+
+and let me break down exactly how we're
+
+going to be using it in our project so
+
+the way we generally work with MongoDB
+
+and Mongoose is to create schemas and
+
+models now this is quite similar to how
+
+we typically work with any kind of data
+
+resource we'd make a model to represent
+
+that data resource now in Mongoose
+
+though we make a schema first now the
+
+schema defines the structure of a data
+
+type or document stored in a database
+
+collection it describes what properties
+
+it should have the type of those
+
+properties etc so for example a user
+
+data type might have a user name bio and
+
+an age now in our case we're working
+
+with blogs so we'd have a schema for a
+
+blog now that's going to have three
+
+properties it's going to have a title
+
+snippet and a body and it's also going
+
+to have an auto-generated ID property as
+
+well now these properties are all going
+
+to be of type string and all of the
+
+fields will be also required so our
+
+schema will define the structure of our
+
+blog documents or like this and that
+
+will be the structure of documents
+
+stored in our blog collection in a
+
+database now the next thing we do is to
+
+create a model based on that schema now
+
+the model is the thing that actually
+
+allows us to community
+
+with a particular database collection
+
+for example if we create a block model
+
+which is based on a blog schema the blog
+
+model will then have both static and
+
+instance methods which we can use to
+
+save update delete or read data from the
+
+blog's collection so that's kind of the
+
+theory behind it don't worry so much if
+
+you don't fully understand it yet we're
+
+gonna have plenty of practice and let's
+
+start by using Mongoose to connect to
+
+the database okay then so the next step
+
+is to actually connect to the database
+
+using Mongoose so to do that we have to
+
+install Mongoose because it is a third
+
+party package and we'll say NPM install
+
+Mongoose to do that so we can then
+
+require it up here by saying Const
+
+Mongoose is equal to a require and the
+
+package name is Mongoose so now we can
+
+use this Mongoose object right here to
+
+connect to the database and I'll do that
+
+down here by saying Mongoose and then
+
+use a method called connect like so now
+
+this expects as an argument a connection
+
+string like this now before we pass it
+
+in I do want to make a quick change to
+
+this at the minute it's going to connect
+
+to a test database that's what this
+
+means right here but we want to connect
+
+to this database node touch that we
+
+create it so I'm going to replace test
+
+with whatever this says right here so
+
+node totes so that it connects to that
+
+database like so okay so now I'm going
+
+to pass this thing right here this
+
+constants into this connect method and
+
+then Mongoose is going to go out and
+
+connect to that database forest now if I
+
+was to save this right now and run it we
+
+might get a deprecation warning so let
+
+me say node on app to run this and you
+
+can see right here we get a deprecation
+
+warning now you can leave that if you
+
+want to it's not really going to affect
+
+how we use the code but what I'm going
+
+to do is pass in a second argument which
+
+is an options object to this connect
+
+method so I'm just gonna paste this in
+
+you can pause it and write it as well
+
+and this is just going to stop those
+
+deprecation warnings but like I say it's
+
+not going to affect how we write the
+
+code in the future so now if I save this
+
+and run
+
+file again we shouldn't get those
+
+deprecation warnings down here awesome
+
+now this right here is actually an
+
+asynchronous task it goes out and it
+
+takes some time to do and therefore it
+
+returns something like a promise and we
+
+can tack on the then method to it so
+
+this then method takes in a callback
+
+function which is gonna fire when this
+
+connection is complete after it's
+
+connected to the database and we get a
+
+result in this callback function which
+
+we can use if we want to I'm just going
+
+to say in here console dot log connected
+
+to DB and we also get a catch method in
+
+case there's an error we can catch the
+
+error and we'll do that inside a
+
+callback function and we'll log that to
+
+the console as well
+
+now hopefully there won't be any errors
+
+but let's just test this out we should
+
+hopefully see this logged it to the
+
+console or right here
+
+so let me save this and run it and you
+
+can see it takes a little bit of time
+
+but after a couple of seconds we should
+
+see this thing right here connected to
+
+the database awesome so that works now
+
+that if you think about it we don't
+
+really want our server to be listening
+
+for requests until this connection has
+
+been made because for example if a user
+
+requests the home page and that home
+
+page lists a load of data dependent on
+
+the database then we can't show that
+
+until the connection to the database has
+
+been established so we really don't want
+
+to be listening for requests until this
+
+is completed so what we could do is we
+
+could take this and we could paste it
+
+inside this then block instead and then
+
+we're only going to listen for requests
+
+after this connection is complete and
+
+that makes sense so let's delete this
+
+down here save it and make sure there's
+
+no errors which that's not awesome okay
+
+so the next thing to do now is to create
+
+a schema and a model for our blog data
+
+so I'm going to create a new folder for
+
+all of my models and schemas over here
+
+and I'm going to call that folder models
+
+now we want to create a model and a
+
+schema for a block so let's create a new
+
+file called blog
+
+jas alright so inside here the first
+
+thing we need to do is require mongoose
+
+so const mongoose is equal to holy choir
+
+and it's going to be the Mongoose
+
+package then we also need to get
+
+something from the mongoose object right
+
+here and that is the schema so I'm gonna
+
+say Const scheme up with a capital S is
+
+equal to Mongoose dots scheme out with
+
+capital S okay so remember a schema is
+
+the thing that is going to define the
+
+structure of the documents that we're
+
+gonna later store inside a collection
+
+it's the thing that a model wraps around
+
+okay so this thing right here is
+
+actually a constructor function and
+
+we're going to use it to create a new
+
+schema and we're going to store that in
+
+a constant now you can call your schema
+
+whatever you want I'm going to call it
+
+blog schema that makes absolute sense to
+
+me and that is equal to a new schema so
+
+this creates a new instance of a schema
+
+object now we need to pass in an object
+
+as a parameter so that this object can
+
+describe the structure of the documents
+
+that we want to store in our blocks
+
+collection ultimately so right here we
+
+can add the different properties that we
+
+want our blog objects to have for
+
+example I want to have a title right I
+
+want that to be a property of our blog
+
+documents now right here I can also say
+
+that this has to be a string type now I
+
+also want to say this is required so
+
+instead of just doing that I'm going to
+
+open this up into an object and
+
+therefore we can add some extra
+
+validation as well so we can say the
+
+type is going to be a string but also
+
+we're going to say that required is true
+
+and that means that this field is
+
+required for blog documents alright so
+
+then let's do some more fields we also
+
+want our blogs to have a snippet
+
+property and again let's open up an
+
+object so we can add the type which is
+
+also going to be of type string and it's
+
+also going to be required right so this
+
+is Mongoose creating a schema for us and
+
+we're allowed to say what type of dates
+
+each property
+
+be and whether it's required or not so
+
+let's just add one more which is the
+
+body and this also is going to be of
+
+type string and we also want to make
+
+this required like so alright then so
+
+they're the only three properties we
+
+really want on our blog schema now after
+
+this object right here we can pass in a
+
+second argument to this schema
+
+constructor and this is a bit like an
+
+options object now what I want to do is
+
+set time stamps in here to true and this
+
+automatically generates time stamp
+
+properties for us on our blog documents
+
+as well so like a created and updated a
+
+property and every time we therefore in
+
+the future update or create a blog
+
+document it's going to auto assign
+
+values to those properties for us and
+
+we'll see that later on when we see the
+
+data inside our collection okay so first
+
+thing you need to do is spell time
+
+stamps correctly so time stamps like so
+
+now the next thing we need to do is
+
+create a model and that model is going
+
+to be based on this blog schema so
+
+remember the schema is the thing that
+
+defines the structure of our documents
+
+the model is the thing that surrounds
+
+that and then provides us with an
+
+interface by which to communicate with a
+
+database collection for that document
+
+type so I'm going to create a new
+
+constant down here to store this model
+
+in and typically the names of these
+
+models are given a capital letter so I'm
+
+going to call it blog with a capital B
+
+and I'm going to set that equal to
+
+Mongoose and then use a method called
+
+model now this model takes in as a first
+
+argument the name of this model now the
+
+name of this is important I'm going to
+
+call it blog the reason it's important
+
+is because it's going to look at this
+
+name it's going to pluralize it and then
+
+look for that collection inside the
+
+database whenever we use this model in
+
+the future to communicate with the
+
+database so it's gonna therefore look
+
+for blocks right because we've called
+
+model blog so when it connects is going
+
+to look for this
+
+blocks collection right here
+
+automatically so we don't need to ever
+
+say in the future look I want you to
+
+search the blog's collection whenever we
+
+use this blog thing right here in the
+
+future to find something because we're
+
+going to get access to different methods
+
+on this in the future provided by the
+
+model then we don't need to say find the
+
+blog's collection it's going to
+
+automatically look for the blog's
+
+collection based on this name alright so
+
+that's the first argument we passed in
+
+the second argument is going to be the
+
+schema we want to base this model on so
+
+what type of objects and we're going to
+
+store inside this collection well it's
+
+going to be the blog schema and we just
+
+created all right so that's it two steps
+
+we make our schema which defines the
+
+structure and then we create a model
+
+based on that schema and we define the
+
+name of this model which should be the
+
+singular of the collection name and we
+
+store that inside a constants or right
+
+here finally the only thing we have to
+
+do now is export this model so we can
+
+use elsewhere in the project so remember
+
+to do that we can say module done
+
+exports and set that equal to the blog
+
+view there we go there my friends we
+
+have created our blog schema and our
+
+blog model and now we have this model we
+
+can use it to save some new blog
+
+documents to our database collection
+
+okay then so now we have our blog model
+
+right here let's try using this in the
+
+code to interact with the database so
+
+that inside app J guess what I'm gonna
+
+do is create just a handful of sandbox
+
+routes if you like just to test out this
+
+interaction with the database so what
+
+I'm going to do first of all is a get
+
+handler app get which is going to
+
+respond to requests to /add - block and
+
+this is going to be used to add a blog
+
+to the collection so we'll fire a
+
+callback when that request comes in
+
+taking the request object and the
+
+response object and inside what we want
+
+to do now is create a new instance of a
+
+blog documents and then save that to the
+
+blog's collection in the database so
+
+first of all we need to import the model
+
+that we exported right here so let's do
+
+that right at the top so I'm going to
+
+say Const blog is equal to require and
+
+we want to go into the models folder so
+
+dot forward slash models and then we
+
+want the blog file okay cool
+
+so we have that now we can create a new
+
+instance of a blog by saying down here
+
+Const blog and you can call the constant
+
+wherever you want this is just what I am
+
+calling it and then set that equal to a
+
+new blog so we're using the model to
+
+create a new instance of a blog document
+
+within the code and in here we pass an
+
+object with the different properties of
+
+this blog now remember inside our schema
+
+we said that each blog should have a
+
+title which is a string a snippet which
+
+is a string and also a body which is a
+
+string we don't have to pass this in
+
+Mongoose automatically takes care of the
+
+timestamps for us so just these three
+
+things right here that we need to worry
+
+about so let's add in a title property
+
+and that is going to be new blog very
+
+rich all right and the snippet is going
+
+to be about oops
+
+about my new blog all right and then the
+
+body is gonna be more about my new
+
+block I really pity the people to go and
+
+read my blog because this is about as
+
+interesting as it's gonna get anyway we
+
+have that new instance of the blog now
+
+and we can use a method on this to save
+
+it to the database and it's dead simple
+
+to do that we just say blog which is the
+
+new instance we just created using the
+
+blog model and then we use a method on
+
+it called save so when we get a new
+
+instance of the blog model it gives us a
+
+load of different methods that we can
+
+use and we're using one called
+
+save to save this to the database now
+
+under the hood mongoose is going to say
+
+well okay we've used the blog model
+
+therefore i'm going to look for the
+
+blog's collection based on this name and
+
+i'm going to take this document that
+
+you've created with this information and
+
+i'm going to save it to the blog's
+
+collection and it goes out and it does
+
+that for us
+
+now this is an asynchronous task it
+
+takes some time to do it goes off and
+
+does it it might take a second to do
+
+probably less but nonetheless it takes
+
+some time and it returns us a promise so
+
+we can tack on a then method which is
+
+going to fire a callback function when
+
+this promise resolves ok so inside this
+
+callback function we get the result and
+
+what we're gonna do is just send back a
+
+response so response does send and we're
+
+going to send back the results so we can
+
+see that in the browser and we also want
+
+to attach a catch method to this just in
+
+case there was any kind of error with
+
+this action and we're going to log that
+
+to the console if there is one console
+
+don't log error ok so dead simple right
+
+now let's try going to this URL in the
+
+browser so let me say a local host 3000
+
+/ad - blog and we get this response in a
+
+browser and this looks like a javascript
+
+object right we have the curly braces
+
+and curly braces there and we get an ID
+
+this is auto-generated for us we're
+
+gonna title which is the title we give
+
+it the snippet about my new blog body
+
+etc we also get these time stamps that
+
+Mongoose created for us right here as
+
+well so this
+
+thing right here this object kind of
+
+thing that we're seeing is actually the
+
+new document object that is being sent
+
+back to us in the code once this action
+
+is complete so once mangu saves it to
+
+the database the database then sends us
+
+back an object version of that new
+
+document so not this object right here
+
+this is slightly different because it
+
+doesn't have those timestamps or the ID
+
+on it or anything like that it sends us
+
+back the actual documents inside the
+
+collection that it's saved right and if
+
+we actually go to the collection now
+
+over here what I'm gonna do is just
+
+refresh by clicking this button and we
+
+should see that that document is inside
+
+this collection now we don't because I
+
+just noticed I made a spelling error
+
+over here but it's actually connected to
+
+the node tooks database which is what I
+
+specified in my string right here so
+
+that database didn't exist it's going to
+
+created that for me because I was a bit
+
+of a plonker before and created one
+
+called notes totes
+
+but anyway it's created this database
+
+for me but it also demonstrates a point
+
+if this collection didn't already exist
+
+then it creates it for us which is nice
+
+so in there we can now see that we have
+
+total documents one right here and this
+
+is that new document right you can see
+
+all of different properties match up and
+
+that is what is being sent back to us
+
+here in the browser because we send it
+
+all right here okay sweet so that is how
+
+we add a new block if I wanted to add
+
+another one let me say new blog to save
+
+it if I go to this URL again add a blog
+
+then it's gonna add another one and we
+
+should see a new blog too over here now
+
+that's the new document it's sending
+
+back and if we go to the database and a
+
+refresh over here we should see two
+
+documents inside here now we can see new
+
+blog and new blog too awesome so that's
+
+how simple it is to save documents to
+
+the database all right so let's do
+
+another one
+
+to actually get all the blocks so say we
+
+want to retrieve all the blogs from the
+
+collection well I'm gonna do another
+
+handler and this is for /all blocks and
+
+will fire a callback function which
+
+takes the request object and also the
+
+response object and inside that function
+
+we need to then use the block model to
+
+get all of the documents from this
+
+collection now this time we don't need
+
+to create a new instance of a block
+
+because we're not creating a new
+
+document we can just use a method
+
+directly on this blog model so down here
+
+I'm going to say block with a capital B
+
+and then I'm going to use the method
+
+find and that gets us all of the
+
+documents inside the blog's collection
+
+it goes out and gets all of them now
+
+again it's asynchronous it takes a
+
+little while to do so we can tack on a
+
+then method to it which fires a callback
+
+function with the results from the
+
+database when it's finished now all I'm
+
+going to do is send that response to the
+
+browser so I'll send the result which
+
+should be a list of documents right this
+
+time and we also want to catch any
+
+errors so let's do that as well
+
+and console dot log the error okay so
+
+then let's try this I'm going to go to
+
+forward slash all blocks over here so
+
+all - blogs and we should get to with
+
+them yes we do inside what looks like an
+
+array so we get two objects very simple
+
+right so that's all there is to it we
+
+use the model and we use a method on
+
+that model called find so when we save
+
+it we use an instance method right here
+
+on the instance of the blog that we
+
+create when we're finding them we use a
+
+method directly on the blog not on an
+
+instance of the block so there is a
+
+difference right there okay so let's do
+
+one more let's try and find a single
+
+blog so let's do another handler app
+
+gets and this is going to be for a
+
+single blog so forward slash single -
+
+blog and we want to fire a callback
+
+function when a request comes in for
+
+this and inside here again we use the
+
+blog model and this
+
+time I'm gonna say find by ID okay so
+
+you know when we saved a new document to
+
+the database look at this idea right
+
+here this is an object ID right here now
+
+this is a unique type and it's not a
+
+string when it's stored in MongoDB but
+
+when we're using Mongoose it handles the
+
+conversion of this into a string and
+
+back again when we need it so if we want
+
+to find something by an ID we can just
+
+pass in a string here and then Mongoose
+
+is going to handle that conversion into
+
+an object ID to compare it to one of
+
+these documents and retrieve that single
+
+document so if I go to all blogs I could
+
+just get this one right here for example
+
+which is the first one new blog and if I
+
+paste that right in here like so it's
+
+gonna go out and it's going to find the
+
+blog with that ID so again it's
+
+asynchronous we can check out of their
+
+method which will fire a callback
+
+function when this is done and inside
+
+that function I want to take the result
+
+back from the database and that should
+
+be a single document this time and I
+
+want to send it as a response to the
+
+browser so response don't send the
+
+results again I'm just gonna copy and
+
+paste this catch block right here we're
+
+gonna catch any error if there is one
+
+and log it to the console so let's try
+
+this I'm gonna get a single blog so
+
+let's just delete all that a single -
+
+blog and we get that one blog now if I
+
+change this so we use the other ID so if
+
+I get this one right here which is blog
+
+to see if this works okay save it and go
+
+to single blog and refresh we should get
+
+new blog - this time which we do awesome
+
+so there become a friends that's the
+
+basics of how to interact with this
+
+database so we've seen how to save a new
+
+blog how to find all the blogs and also
+
+how to find a single blog based on the
+
+ID we're also going to see how to delete
+
+blogs later on and we're going to put
+
+this kind of logic improper outs later
+
+on because this
+
+the minute is not the way I want to go I
+
+don't want these kind of routes I want
+
+to integrate these into my routes that
+
+we have down here and maybe create some
+
+more in the future
+
+so they're my friends now we know how to
+
+interact with the MongoDB database using
+
+Mongoose now we can delete these kind of
+
+sandbox routes that we created and
+
+instead apply this kind of logic in some
+
+of our routes down here and we're also
+
+going to make a couple more as we go
+
+forward as well so these are the routes
+
+we have at the minute we have a home
+
+page right here we also have an about
+
+page we have this page as well forward
+
+slash blogs forward slash create and
+
+that gives us the webform to create a
+
+new blog so what I'm going to do is
+
+split this up into two so these are our
+
+basic routes and I also want to put a
+
+comment right here these are the blog
+
+routes and I want to create a new one so
+
+apt-get and it's going to be forward
+
+slash blogs and this is ultimately going
+
+to be the route to go to if you want to
+
+get a page back where we're going to
+
+display all of the blogs now as a matter
+
+of fact inside the home page that's what
+
+we're currently doing with this dummy
+
+data right here but what I'm going to do
+
+is do that down here in this handler
+
+instead and for the sake of this
+
+tutorial instead of rendering of you
+
+inside this handler I'm just going to
+
+redirect it to this one right here so
+
+that if you go to the home page we're
+
+forwarded on to the forward slash blogs
+
+page and then we render out all of the
+
+blocks now if you wanted to instead you
+
+could do a separate home page here but
+
+like I said for the sake of this
+
+tutorial I'm just going to forward it on
+
+to this URL so to do that remember we
+
+just need to do a redirect and we do
+
+that by saying response dot redirect and
+
+where we want to redirect to and we want
+
+to go to forward slash blogs so now we
+
+go to the home page
+
+we're redirected to forward slash blogs
+
+and that is going to be handled down
+
+here in the blog routes just so we can
+
+separate these things from the normal
+
+routes a little bit okay so we need a
+
+callback function we're taking the
+
+request object and the response object
+
+and inside here the first thing we want
+
+to do is get all the blog's now we saw
+
+how we could do that we could use the
+
+blog model and then use the find method
+
+and this goes out and it finds all of
+
+the documents inside the blog's
+
+collection so attack on the dot then
+
+method because this is asynchronous
+
+we fire a callback function when this is
+
+done now inside this callback function
+
+we're taking the result that comes back
+
+from the database we also need a catch
+
+method to take any error and we'll take
+
+that error into the callback function
+
+and we'll log that to the console okay
+
+so now when we have the result remember
+
+when we get all of the blocks that was
+
+an array of blocks we want to pass this
+
+in to our index view over here if we
+
+open this up and go to index remember
+
+this expects a property called blocks so
+
+what we could do is pass that array of
+
+blocks that we get back into that view
+
+and we don't need to change any of this
+
+code because we're already expecting an
+
+array of blocks right here we're cycling
+
+through them and we don't need to change
+
+any of the code so let's do that let's
+
+go down here and render view so response
+
+dot render and we want to render the
+
+index view and we want to pass in some
+
+data now the first piece of data should
+
+be the title because we expect that
+
+title inside the head over here where we
+
+output the title okay so that's the
+
+first bit of data we want to pass in so
+
+the title in this case is just going to
+
+be all blocks okay now the second bit of
+
+data we want to pass in is whatever we
+
+get back here that's the array of blocks
+
+so the property name is going to be
+
+blocks and we pass in the results that's
+
+all there is to it so then now we're
+
+passing in these two things let's save
+
+it and go back to the browser so let me
+
+come over here and let me go to just
+
+forward slash to see that redirect in
+
+action we got to fold slash blocks and
+
+we're getting all of the documents and
+
+now we're outputting those in the view
+
+because we're cycling through those we
+
+did all of this before with dummy data
+
+we're cycling through those blogs and
+
+outputting the title and the snippet for
+
+each individual blog right so that was
+
+pretty nice pretty easy to do now I also
+
+want to show you one more quick thing
+
+right here and that is the sort method
+
+right here so we can sort by a
+
+particular field inside our document
+
+now I'm going to sort by created at
+
+remember these were the time stamps that
+
+Mongoose automatically added on for us
+
+and I'm going to say minus one right
+
+here and that means descending order so
+
+it's going to go from the newest to the
+
+oldest and the newest now will be at the
+
+top of the page instead of the oldest so
+
+this should now be at the top of the
+
+page so let me save that and we can come
+
+over here and refresh and we should see
+
+now that blog - it should be at the top
+
+of the page once this refreshes yes we
+
+do so we are going to be using Mongoose
+
+with MongoDB for the rest of this series
+
+so we'll also see how to do many more
+
+things with it but for now we'll leave
+
+it there
+
